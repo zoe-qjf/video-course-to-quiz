@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<style>
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:#0e1014;color:#e6e8ee;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.75;-webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:860px;margin:0 auto;padding:44px 20px 90px}
+  header{border-bottom:1px solid #212734;padding-bottom:22px;margin-bottom:24px}
+  h1{font-size:25px;margin:0 0 10px;letter-spacing:.3px}
+  .sub{color:#8b93a7;font-size:14px;line-height:1.9}
+  .src{color:#6f7787;font-size:12.5px;margin-top:8px}
+
+  .topbar{display:flex;align-items:center;gap:14px;margin:0 0 8px;flex-wrap:wrap}
+  .track{flex:1;min-width:180px;height:6px;background:#1b2029;border-radius:99px;overflow:hidden}
+  .fill{height:100%;width:0;background:linear-gradient(90deg,#d9a94a,#e8c67d);border-radius:99px;transition:width .35s ease}
+  .score{font-size:13px;color:#9aa2b4;white-space:nowrap}
+  .score b{color:#e6e8ee}
+  .score .ok{color:#4fae7d}
+  .score .bad{color:#c96a6a}
+  .tip{color:#6f7787;font-size:12.5px;margin:0 0 22px}
+
+  .q{background:#161a22;border:1px solid #242a36;border-radius:14px;padding:20px 22px;margin:16px 0}
+  .qhead{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+  .qtag{display:inline-block;font-size:12px;color:#d9a94a;background:rgba(217,169,74,.12);
+        border:1px solid rgba(217,169,74,.28);padding:1px 10px;border-radius:20px;letter-spacing:.5px}
+  .qtag.multi{color:#7ba7e8;background:rgba(123,167,232,.1);border-color:rgba(123,167,232,.28)}
+  .qtag.open{color:#9c8ce0;background:rgba(156,140,224,.1);border-color:rgba(156,140,224,.28)}
+  .ts{font-size:11.5px;color:#727c8e;background:#11151d;border:1px solid #202634;
+      padding:1px 8px;border-radius:6px;font-variant-numeric:tabular-nums}
+  .qtext{font-size:16px;font-weight:600;margin:0 0 14px;color:#eef1f7}
+  .qtext .no{color:#7c869c;font-weight:700;margin-right:8px}
+
+  .opt{display:flex;gap:10px;align-items:flex-start;padding:11px 14px;border:1px solid #262d3a;
+       border-radius:10px;margin:8px 0;cursor:pointer;transition:.15s;background:#12151c;
+       color:#cfd4e0;font-size:15px;user-select:none}
+  .opt:hover{border-color:#3c4a61;background:#171d27}
+  .opt .k{color:#7c869c;font-weight:700;min-width:16px}
+  .opt.sel{border-color:#5b76a8;background:rgba(91,118,168,.16)}
+  .opt.correct{border-color:#2f7d54;background:rgba(47,125,84,.15)}
+  .opt.correct .k{color:#4fae7d}
+  .opt.wrong{border-color:#8a3a3a;background:rgba(138,58,58,.15)}
+  .opt.wrong .k{color:#c96a6a}
+  .opt.locked{cursor:default;background:#12151c}
+  .opt.locked:hover{border-color:#262d3a;background:#12151c}
+  .opt.locked.correct,.opt.locked.correct:hover{border-color:#2f7d54;background:rgba(47,125,84,.15)}
+  .opt.locked.wrong,.opt.locked.wrong:hover{border-color:#8a3a3a;background:rgba(138,58,58,.15)}
+
+  .exp{display:none;margin-top:14px;padding:12px 15px;border-left:3px solid #d9a94a;
+       background:rgba(217,169,74,.06);border-radius:0 8px 8px 0;font-size:14px;color:#b9c0d0}
+  .exp.show{display:block}
+  .exp .lab{color:#d9a94a;font-weight:700;margin-right:6px}
+  .exp .verdict{font-weight:700;margin-right:8px}
+  .exp .verdict.good{color:#4fae7d}
+  .exp .verdict.bad{color:#c96a6a}
+  .exp q{color:#cfd6e6;quotes:"「" "」"}
+
+  .btn{display:inline-block;border:1px solid #33405a;background:#1a212d;color:#cfd6e6;
+       font-size:13.5px;padding:7px 16px;border-radius:8px;cursor:pointer;transition:.15s;
+       font-family:inherit}
+  .btn:hover{border-color:#4b5f80;background:#212a39}
+  .btn.gold{border-color:rgba(217,169,74,.45);color:#e3c281;background:rgba(217,169,74,.1)}
+  .btn.gold:hover{background:rgba(217,169,74,.18)}
+  .submit{margin-top:12px}
+
+  .actions{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap;align-items:center}
+  .divider{width:100%;height:1px;background:#1c2230;margin:34px 0 26px}
+
+  details.kb{background:#141821;border:1px solid #232a37;border-radius:12px;padding:0}
+  details.kb summary{cursor:pointer;padding:16px 20px;font-weight:600;color:#dfe4ee;font-size:15px}
+  details.kb summary::marker{color:#d9a94a}
+  details.kb .inner{padding:0 22px 18px;color:#aab2c3;font-size:14px}
+  details.kb ul{margin:8px 0 0;padding-left:20px}
+  details.kb li{margin:7px 0}
+  details.kb b{color:#d9a94a;font-weight:600}
+
+  footer{margin-top:36px;color:#5d6677;font-size:12.5px;line-height:1.85;border-top:1px solid #1a202b;padding-top:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>{{TITLE}}</h1>
+    <div class="sub">{{SUBTITLE}}</div>
+    <div class="src">{{SOURCE}}</div>
+  </header>
+
+  <div class="topbar">
+    <div class="track"><div class="fill" id="fill"></div></div>
+    <div class="score" id="score">已答 <b>0</b>/0 &nbsp; <span class="ok">对 0</span> <span class="bad">错 0</span></div>
+  </div>
+  <p class="tip">{{TALLY}}</p>
+
+  <div id="quiz"></div>
+
+  <div class="actions">
+    <button class="btn gold" id="revealAll">显示全部解析</button>
+    <button class="btn" id="reset">重做一遍</button>
+  </div>
+
+  <div class="divider"></div>
+
+  <details class="kb">
+    <summary>本讲核心知识点回顾（做完全部题再看）</summary>
+    <div class="inner">
+{{KB_HTML}}
+    </div>
+  </details>
+
+  <footer>
+    题目依据视频实际讲解内容编写，灰色时间戳对应原视频进度。仅用于学习自测，不构成任何投资建议。
+  </footer>
+
+</div>
+
+<script>
+const QUESTIONS = {{QUESTIONS_JSON}};
+
+const LETTERS = ["A","B","C","D","E","F"];
+const quizEl = document.getElementById("quiz");
+const fillEl = document.getElementById("fill");
+const scoreEl = document.getElementById("score");
+const totalObjective = QUESTIONS.filter(function(q){ return q.type !== "open"; }).length;
+
+let answered = 0, right = 0, wrong = 0;
+
+QUESTIONS.forEach(function(item, idx){
+  const card = document.createElement("div");
+  card.className = "q";
+
+  let tagClass = "", tagText = "";
+  if (item.type === "judge") { tagText = "判断题"; }
+  if (item.type === "single") { tagText = "单选题"; }
+  if (item.type === "multi") { tagClass = "multi"; tagText = "多选题"; }
+  if (item.type === "open") { tagClass = "open"; tagText = "简答题"; }
+
+  let html = '<div class="qhead"><span class="qtag ' + tagClass + '">' + tagText + '</span>';
+  if (item.ts) { html += '<span class="ts">视频 ' + item.ts + '</span>'; }
+  html += '</div>';
+  html += '<p class="qtext"><span class="no">' + (idx + 1) + '.</span>' + item.q + '</p>';
+
+  if (item.type === "open") {
+    html += '<button class="btn" data-open="' + idx + '">查看参考答案</button>';
+    html += '<div class="exp" id="open-exp-' + idx + '"><span class="lab">参考：</span>' + item.sample + '</div>';
+  } else {
+    item.options.forEach(function(opt, oi){
+      html += '<div class="opt" data-q="' + idx + '" data-o="' + oi + '">' +
+              '<span class="k">' + LETTERS[oi] + '</span><span>' + opt + '</span></div>';
+    });
+    html += '<div class="exp" id="exp-' + idx + '"></div>';
+    if (item.type === "multi") {
+      html += '<button class="btn submit" data-submit="' + idx + '">提交答案</button>';
+    }
+  }
+
+  card.innerHTML = html;
+  quizEl.appendChild(card);
+});
+
+function updateScore(){
+  fillEl.style.width = (totalObjective ? answered / totalObjective * 100 : 0) + "%";
+  scoreEl.innerHTML = '已答 <b>' + answered + '</b>/' + totalObjective +
+                      ' &nbsp; <span class="ok">对 ' + right + '</span>' +
+                      ' <span class="bad">错 ' + wrong + '</span>';
+}
+
+function lockQuestion(qi){
+  const card = quizEl.children[qi];
+  card.querySelectorAll(".opt").forEach(function(o){ o.classList.add("locked"); });
+  const btn = card.querySelector('[data-submit="' + qi + '"]');
+  if (btn) { btn.style.display = "none"; }
+}
+
+function showExplain(qi, isCorrect){
+  const item = QUESTIONS[qi];
+  const box = document.getElementById("exp-" + qi);
+  let verdict;
+  if (item.type === "multi") {
+    verdict = isCorrect ? '<span class="verdict good">全对</span>' : '<span class="verdict bad">有遗漏或多选</span>';
+  } else {
+    verdict = isCorrect ? '<span class="verdict good">回答正确</span>' : '<span class="verdict bad">回答错误</span>';
+  }
+  box.innerHTML = verdict + (item.explain || "");
+  box.classList.add("show");
+}
+
+function markOption(qi, oi, cls){
+  const card = quizEl.children[qi];
+  const opt = card.querySelector('.opt[data-o="' + oi + '"]');
+  if (opt) { opt.classList.add(cls); }
+}
+
+quizEl.addEventListener("click", function(e){
+  const openBtn = e.target.closest("[data-open]");
+  if (openBtn) {
+    const i = openBtn.getAttribute("data-open");
+    const box = document.getElementById("open-exp-" + i);
+    box.classList.toggle("show");
+    openBtn.textContent = box.classList.contains("show") ? "收起参考答案" : "查看参考答案";
+    return;
+  }
+
+  const subBtn = e.target.closest("[data-submit]");
+  if (subBtn) {
+    const qi = Number(subBtn.getAttribute("data-submit"));
+    const item = QUESTIONS[qi];
+    const card = quizEl.children[qi];
+    const picked = [];
+    card.querySelectorAll(".opt.sel").forEach(function(o){
+      picked.push(Number(o.getAttribute("data-o")));
+    });
+    if (picked.length === 0) { return; }
+    picked.sort();
+    const target = item.answer.slice().sort();
+    const isCorrect = picked.length === target.length &&
+                      picked.every(function(v, i){ return v === target[i]; });
+    item.answer.forEach(function(ai){ markOption(qi, ai, "correct"); });
+    picked.forEach(function(pi){
+      if (item.answer.indexOf(pi) === -1) { markOption(qi, pi, "wrong"); }
+    });
+    answered++; if (isCorrect) { right++; } else { wrong++; }
+    updateScore();
+    lockQuestion(qi);
+    showExplain(qi, isCorrect);
+    return;
+  }
+
+  const opt = e.target.closest(".opt");
+  if (!opt) { return; }
+  if (opt.classList.contains("locked")) { return; }
+  const qi = Number(opt.getAttribute("data-q"));
+  const oi = Number(opt.getAttribute("data-o"));
+  const item = QUESTIONS[qi];
+  if (item.type === "multi") {
+    opt.classList.toggle("sel");
+    return;
+  }
+  const isCorrect = item.answer[0] === oi;
+  markOption(qi, item.answer[0], "correct");
+  if (!isCorrect) { markOption(qi, oi, "wrong"); }
+  answered++; if (isCorrect) { right++; } else { wrong++; }
+  updateScore();
+  lockQuestion(qi);
+  showExplain(qi, isCorrect);
+});
+
+document.getElementById("revealAll").addEventListener("click", function(){
+  QUESTIONS.forEach(function(item, i){
+    if (item.type === "open") {
+      const box = document.getElementById("open-exp-" + i);
+      box.classList.add("show");
+      const b = quizEl.querySelector('[data-open="' + i + '"]');
+      if (b) { b.textContent = "收起参考答案"; }
+      return;
+    }
+    const box = document.getElementById("exp-" + i);
+    if (!box.classList.contains("show")) {
+      box.innerHTML = '<span class="lab">答案：</span>' +
+        item.answer.map(function(a){ return LETTERS[a]; }).join("、") +
+        "<br>" + (item.explain || "");
+      box.classList.add("show");
+    }
+    item.answer.forEach(function(a){ markOption(i, a, "correct"); });
+    lockQuestion(i);
+  });
+});
+
+document.getElementById("reset").addEventListener("click", function(){
+  location.reload();
+});
+
+updateScore();
+</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# 工作目录：视频、音频、模型缓存体积大，不进仓库
+.video-kit/
+work/
+*.m4a
+*.mp4
+*.webm
+*.mkv
+*.wav
+*.vtt
+*.srt
+
+# 转写与抽帧的中间产物
+transcript.txt
+meta.json
+frames/
+
+# 系统
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
