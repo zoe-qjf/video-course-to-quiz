@@ -1,4 +1,4 @@
-# videolearn
+# video-course-to-quiz
 
 把任意视频课程转成三样东西：**全文转写**、**结构化大纲**、**可自测的题目网页**。
 
@@ -37,10 +37,10 @@
 
 ```bash
 # WorkBuddy
-git clone https://github.com/zoe-qjf/videolearn.git ~/.workbuddy/skills/videolearn
+git clone https://github.com/zoe-qjf/video-course-to-quiz.git ~/.workbuddy/skills/video-course-to-quiz
 
 # Claude Code
-git clone https://github.com/zoe-qjf/videolearn.git ~/.claude/skills/videolearn
+git clone https://github.com/zoe-qjf/video-course-to-quiz.git ~/.claude/skills/video-course-to-quiz
 ```
 
 Windows 下把 `~` 换成 `C:/Users/<你的用户名>`。
